@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets (never commit credentials)
+.env
+*.env.local
+secrets.json
+
+# Build output (if a bundler is added later)
+dist/
+build/
+*.zip
+
+# Node (if dev tooling is added later)
+node_modules/
+package-lock.json
+yarn.lock

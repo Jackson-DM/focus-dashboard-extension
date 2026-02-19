@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="dashboard-header">
+      <h1 class="dashboard-title">Focus Dashboard</h1>
+      <p class="dashboard-date" id="current-date"></p>
+    </header>
+
+    <main class="sections">
+      <section class="section" id="section-health">
+        <h2 class="section-title">Health</h2>
+        <ul class="task-list" id="tasks-health">
+          <!-- Tasks will be rendered here -->
+        </ul>
+      </section>
+
+      <section class="section" id="section-work">
+        <h2 class="section-title">Work</h2>
+        <ul class="task-list" id="tasks-work">
+          <!-- Tasks will be rendered here -->
+        </ul>
+      </section>
+
+      <section class="section" id="section-followups">
+        <h2 class="section-title">Follow-ups</h2>
+        <ul class="task-list" id="tasks-followups">
+          <!-- Tasks will be rendered here -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="notion.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>

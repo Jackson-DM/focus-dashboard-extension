@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Focus Dashboard",
+  "version": "0.1.0",
+  "description": "A personal productivity dashboard as your Chrome new tab page.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "options_page": "options.html",
+  "permissions": [
+    "storage"
+  ]
+}
