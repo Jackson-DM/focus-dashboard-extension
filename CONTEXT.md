@@ -44,8 +44,8 @@ The goal is zero-friction daily orientation. Instead of opening Notion manually 
 | 2026-02-19 | chrome.storage.local for credentials                 | Simplest secure option within MV3            |
 
 ## Current Status
-Phase 1 complete.
-Extension successfully overrides Chrome New Tab and renders dashboard layout.
+Phase 2 complete.
+Extension includes working New Tab dashboard and settings page with persistent Notion credential storage.
 
 ## Next Step
-Phase 2: Implement options page to store Notion Integration Token and Database ID using chrome.storage.local.
+Phase 3: Implement Notion API integration to fetch tasks and render them in the dashboard.
