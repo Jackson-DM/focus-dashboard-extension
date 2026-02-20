@@ -18,14 +18,14 @@
 - [ ] Add "Test Connection" button that makes a minimal Notion API call to verify credentials
 - [ ] Display connection status indicator on the dashboard header
 
-## Phase 3 — Notion Integration
+## Phase 3 — Notion Integration (READ-ONLY scope complete)
 
-- [ ] Implement `fetchTasks()` — query Notion database, filter by today's date or no date, return tasks grouped by Category
-- [ ] Implement `updateTaskStatus()` — PATCH Notion page to toggle Done checkbox
-- [ ] Wire `fetchTasks()` into `newtab.js` `init()`
-- [ ] Wire checkbox `change` events to `updateTaskStatus()`
-- [ ] Handle API errors gracefully (show inline error, not blank page)
-- [ ] Cache last-fetched tasks in `chrome.storage.local` for instant load, then refresh
+- [x] Implement `fetchTasks()` — POST /v1/databases/:id/query, filter Status != "Done" (fallback: all rows), group by Area into { health, work, followups }
+- [ ] Implement `updateTaskStatus()` — PATCH Notion page to toggle Done checkbox (deferred to Phase 4)
+- [x] Wire `fetchTasks()` into `newtab.js` `init()`
+- [ ] Wire checkbox `change` events to `updateTaskStatus()` (deferred to Phase 4)
+- [x] Handle API errors gracefully — missing creds banner (info style), API failure banner (error style) + console.error
+- [x] Cache last-fetched tasks in `chrome.storage.local` — instant render from cache, then live refresh
 
 ## Phase 4 — Polish
 
