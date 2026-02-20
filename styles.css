@@ -36,6 +36,12 @@ body {
   padding-bottom: 20px;
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .dashboard-title {
   font-size: 2rem;
   font-weight: 700;
@@ -48,6 +54,29 @@ body {
   font-size: 0.95rem;
   color: #777;
   font-weight: 400;
+}
+
+.refresh-btn {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #555;
+  background: none;
+  border: 1px solid #d0d0cb;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.refresh-btn:hover {
+  background: #f0f0eb;
+  color: #111;
+}
+
+.refresh-btn:disabled {
+  color: #aaa;
+  border-color: #e0e0db;
+  cursor: default;
 }
 
 /* --- Section Grid --- */
@@ -84,7 +113,7 @@ body {
 
 .task-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   font-size: 0.9rem;
 }
@@ -93,12 +122,24 @@ body {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  margin-top: 2px;
   accent-color: #4f46e5;
   cursor: pointer;
 }
 
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .task-label {
   color: #1a1a1a;
+}
+
+.task-due {
+  font-size: 0.75rem;
+  color: #aaa;
 }
 
 .task-done .task-label {
@@ -131,4 +172,17 @@ body {
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #dc2626;
+}
+
+/* --- Footer --- */
+.dashboard-footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0db;
+  text-align: right;
+}
+
+.last-synced {
+  font-size: 0.75rem;
+  color: #bbb;
 }

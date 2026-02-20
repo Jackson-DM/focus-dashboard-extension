@@ -123,9 +123,19 @@ async function fetchTasks() {
     const task = parsePage(page);
     const key  = areaToSectionKey(task.area);
     if (key) {
-      grouped[key].push({ id: task.id, title: task.title, done: task.done });
+      grouped[key].push({ id: task.id, title: task.title, due: task.due, done: task.done });
     }
     // Tasks with no Area or an unrecognised Area value are silently skipped
+  }
+
+  // Sort each section by Due ascending; tasks without a due date go last
+  for (const key of Object.keys(grouped)) {
+    grouped[key].sort((a, b) => {
+      if (a.due && b.due) return a.due < b.due ? -1 : a.due > b.due ? 1 : 0;
+      if (a.due)  return -1;
+      if (b.due)  return  1;
+      return 0;
+    });
   }
 
   return grouped;

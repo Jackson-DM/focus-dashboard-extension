@@ -9,7 +9,10 @@
 <body>
   <div class="container">
     <header class="dashboard-header">
-      <h1 class="dashboard-title">Focus Dashboard</h1>
+      <div class="header-top">
+        <h1 class="dashboard-title">Focus Dashboard</h1>
+        <button id="refresh-btn" class="refresh-btn" type="button">Refresh</button>
+      </div>
       <p class="dashboard-date" id="current-date"></p>
     </header>
 
@@ -37,6 +40,10 @@
         </ul>
       </section>
     </main>
+
+    <footer class="dashboard-footer">
+      <p id="last-synced" class="last-synced"></p>
+    </footer>
   </div>
 
   <script src="notion.js"></script>

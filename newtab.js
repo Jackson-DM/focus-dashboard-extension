@@ -2,6 +2,19 @@
 
 const CACHE_KEY = 'cachedTasks';
 
+// --- Due date formatting ---
+
+// Format a Notion ISO date string (YYYY-MM-DD) for display.
+// Appends T00:00:00 to force local-time parsing (avoids UTC day-shift).
+function formatDue(due) {
+  if (!due) return null;
+  const d    = new Date(due + 'T00:00:00');
+  const now  = new Date();
+  const opts = { month: 'short', day: 'numeric' };
+  if (d.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+  return d.toLocaleDateString('en-US', opts);
+}
+
 // --- Date ---
 
 function renderDate() {
@@ -19,7 +32,7 @@ function renderDate() {
 // --- Task rendering ---
 
 // Render a list of tasks into a section's <ul>.
-// tasks: Array<{ id: string, title: string, done: boolean }>
+// tasks: Array<{ id: string, title: string, due: string|null, done: boolean }>
 function renderTasks(sectionId, tasks) {
   const list = document.getElementById(`tasks-${sectionId}`);
   if (!list) return;
@@ -66,12 +79,24 @@ function renderTasks(sectionId, tasks) {
       }
     });
 
+    const info      = document.createElement('div');
+    info.className  = 'task-info';
+
     const label       = document.createElement('span');
     label.className   = 'task-label';
     label.textContent = task.title;
+    info.appendChild(label);
+
+    const formattedDue = formatDue(task.due);
+    if (formattedDue) {
+      const dueEl       = document.createElement('span');
+      dueEl.className   = 'task-due';
+      dueEl.textContent = formattedDue;
+      info.appendChild(dueEl);
+    }
 
     li.appendChild(checkbox);
-    li.appendChild(label);
+    li.appendChild(info);
     list.appendChild(li);
   });
 }
@@ -103,7 +128,18 @@ function readCache() {
 }
 
 function writeCache(grouped) {
-  chrome.storage.local.set({ [CACHE_KEY]: { tasks: grouped, cachedAt: Date.now() } });
+  const cachedAt = Date.now();
+  chrome.storage.local.set({ [CACHE_KEY]: { tasks: grouped, cachedAt } });
+  return cachedAt;
+}
+
+// --- Last synced ---
+
+function renderLastSynced(cachedAt) {
+  const el = document.getElementById('last-synced');
+  if (!el || !cachedAt) return;
+  const t = new Date(cachedAt);
+  el.textContent = `Last synced: ${t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
 }
 
 // --- Initialisation ---
@@ -117,16 +153,18 @@ async function init() {
     renderTasks('health',    cached.tasks.health    ?? []);
     renderTasks('work',      cached.tasks.work      ?? []);
     renderTasks('followups', cached.tasks.followups ?? []);
+    renderLastSynced(cached.cachedAt);
   }
 
   // 2. Fetch live data from Notion and refresh
   try {
-    const grouped = await fetchTasks();
+    const grouped  = await fetchTasks();
     hideBanner();
     renderTasks('health',    grouped.health);
     renderTasks('work',      grouped.work);
     renderTasks('followups', grouped.followups);
-    writeCache(grouped);
+    const cachedAt = writeCache(grouped);
+    renderLastSynced(cachedAt);
   } catch (err) {
     if (err.type === 'missing_credentials') {
       showBanner(
@@ -146,4 +184,16 @@ async function init() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+
+  document.getElementById('refresh-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('refresh-btn');
+    btn.disabled    = true;
+    btn.textContent = 'Syncing…';
+    await new Promise((r) => chrome.storage.local.remove(CACHE_KEY, r));
+    await init();
+    btn.disabled    = false;
+    btn.textContent = 'Refresh';
+  });
+});
