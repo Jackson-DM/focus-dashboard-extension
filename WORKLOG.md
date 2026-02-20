@@ -10,3 +10,10 @@ T+00:40 – Verified Phase 2 (Options Page). Save, load, and confirmation messag
 
 T+01:00 – Phase 3 READ-ONLY implemented (initial — direct fetch, later found CORS issue).
 T+01:20 – CORS patch: moved Notion fetch into background.js (MV3 service worker). manifest.json gains background.service_worker + host_permissions. notion.js now sends chrome.runtime.sendMessage({type:'NOTION_QUERY_TASKS',body}) instead of direct fetch(). background.js is a thin HTTP proxy; notion.js retains all parsing/grouping logic. newtab.js unchanged. notion.js: fetchTasks() queries Notion with Status != "Done" filter (falls back to unfiltered on 400). Maps Area select → health/work/followups. newtab.js: init() loads from cachedTasks cache for instant paint, fetches live data, writes cache on success. Missing-creds info banner and API-error red banner added. newtab.html: status-banner div added. styles.css: banner styles added. updateTaskStatus() and checkbox wiring deferred to Phase 4.
+
+## 2026-02-20
+
+Phase 3 shipped: live Notion tasks now render in the dashboard on every new tab.
+Biggest issue: direct fetch() from the extension page is blocked by CORS — fixed by routing all API calls through a MV3 background service worker (background.js) with host_permissions for api.notion.com.
+Cache (cachedTasks in chrome.storage.local) gives instant first paint; live data refreshes silently in the background.
+Next session: Phase 4 write-back (updateTaskStatus + checkbox wiring), then Phase 5 polish (loading skeleton, empty-state copy, task count badges).
