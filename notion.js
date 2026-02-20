@@ -132,12 +132,27 @@ async function fetchTasks() {
 }
 
 /**
- * Toggle the completion status of a task in Notion.
- * Deferred to Phase 4 — not implemented in this phase.
+ * Update the Status select of a Notion page to "Done" or "Todo".
  *
  * @param {string}  pageId
- * @param {boolean} done
+ * @param {boolean} isDone  true → "Done", false → "Todo"
+ * @returns {Promise<void>}  Resolves on success, rejects with Error on failure.
  */
-async function updateTaskStatus(pageId, done) {
-  console.log(`[notion.js] updateTaskStatus(${pageId}, ${done}) — deferred to Phase 4`);
+function updateTaskStatus(pageId, isDone) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'NOTION_UPDATE_TASK_STATUS', pageId, isDone }, (response) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+        return;
+      }
+      if (!response || !response.ok) {
+        const err    = new Error(response?.error ?? 'Unknown error from background');
+        err.status   = response?.status ?? null;
+        err.detail   = response?.detail ?? null;
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
 }

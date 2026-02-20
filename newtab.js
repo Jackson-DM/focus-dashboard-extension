@@ -43,10 +43,27 @@ function renderTasks(sectionId, tasks) {
     checkbox.type      = 'checkbox';
     checkbox.checked   = task.done;
     checkbox.className = 'task-checkbox';
-    // Checkbox write deferred to Phase 4 — revert any click immediately
-    checkbox.addEventListener('change', () => {
-      console.log(`[newtab.js] Task "${task.title}" toggled — Notion write deferred to Phase 4.`);
-      checkbox.checked = task.done;
+    checkbox.addEventListener('change', async () => {
+      const newDone = checkbox.checked;
+      // Optimistic update
+      checkbox.disabled = true;
+      if (newDone) li.classList.add('task-done');
+      else         li.classList.remove('task-done');
+
+      try {
+        await updateTaskStatus(task.id, newDone);
+        // Success: remove the task from the DOM and invalidate cache so next open is fresh
+        li.remove();
+        chrome.storage.local.remove(CACHE_KEY);
+      } catch (err) {
+        // Revert to original state
+        checkbox.checked  = task.done;
+        checkbox.disabled = false;
+        if (task.done) li.classList.add('task-done');
+        else           li.classList.remove('task-done');
+        console.error('[newtab.js] Failed to update task:', err);
+        showBanner('Failed to update task', 'error');
+      }
     });
 
     const label       = document.createElement('span');
